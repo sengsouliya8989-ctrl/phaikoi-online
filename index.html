@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phaikoi Online</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:
+    radial-gradient(circle at top,#244f46,#071b18 55%,#03100e);
+  color:white;
+  min-height:100vh;
+}
+
+button,input{
+  font:inherit;
+}
+
+.app{
+  max-width:520px;
+  margin:auto;
+  min-height:100vh;
+  padding:20px;
+}
+
+.logo{
+  text-align:center;
+  font-size:34px;
+  font-weight:900;
+  margin:15px 0 5px;
+  letter-spacing:2px;
+}
+
+.subtitle{
+  text-align:center;
+  opacity:.75;
+  margin-bottom:25px;
+}
+
+.panel{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:22px;
+  padding:20px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 15px 50px #0008;
+}
+
+input{
+  width:100%;
+  padding:15px;
+  border:0;
+  border-radius:12px;
+  margin-bottom:12px;
+  background:white;
+  color:#111;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  border:0;
+  border-radius:12px;
+  margin:6px 0;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.primary{
+  background:#e7b84b;
+  color:#241600;
+}
+
+.secondary{
+  background:#ffffff18;
+  color:white;
+  border:1px solid #ffffff30;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.roomCode{
+  text-align:center;
+  font-size:38px;
+  font-weight:900;
+  letter-spacing:8px;
+  color:#ffd66a;
+  margin:15px 0;
+}
+
+.players{
+  margin:15px 0;
+}
+
+.player{
+  display:flex;
+  justify-content:space-between;
+  padding:12px;
+  margin:7px 0;
+  background:#ffffff10;
+  border-radius:12px;
+}
+
+.status{
+  text-align:center;
+  margin:15px 0;
+  color:#ffd66a;
+}
+
+.table{
+  min-height:250px;
+  border-radius:25px;
+  background:
+    radial-gradient(circle,#23765c,#0b382c 70%);
+  padding:20px;
+  margin-bottom:15px;
+  box-shadow:inset 0 0 40px #0006;
+}
+
+.tableTitle{
+  text-align:center;
+  opacity:.7;
+}
+
+.played{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  min-height:120px;
+  align-items:center;
+}
+
+.card{
+  width:58px;
+  height:82px;
+  background:#fff;
+  color:#111;
+  border-radius:9px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  font-weight:bold;
+  box-shadow:0 5px 12px #0007;
+  user-select:none;
+}
+
+.card.red{
+  color:#d22;
+}
+
+.card.selected{
+  transform:translateY(-18px);
+  outline:3px solid #ffd34e;
+}
+
+.hand{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:7px;
+  padding:10px 0;
+}
+
+.hand .card{
+  width:52px;
+  height:75px;
+  font-size:19px;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.message{
+  text-align:center;
+  min-height:25px;
+  color:#ffcf70;
+  margin:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="logo">PHAIKOI</div>
+<div class="subtitle">ONLINE MULTIPLAYER CARD GAME</div>
+
+<!-- HOME -->
+<section id="home" class="panel">
+
+<h2>🎴 ເກມໄພ່ກ້ອຍ</h2>
+
+<input id="name" placeholder="ຊື່ຂອງເຈົ້າ">
+
+<button class="primary" onclick="createRoom()">
+➕ ສ້າງຫ້ອງ
+</button>
+
+<hr style="border-color:#ffffff20;margin:20px 0">
+
+<input id="roomInput"
+       placeholder="ໃສ່ Room Code">
+
+<button class="secondary" onclick="joinRoom()">
+🚪 ເຂົ້າຫ້ອງ
+</button>
+
+<div id="homeMsg" class="message"></div>
+
+</section>
+
+
+<!-- LOBBY -->
+<section id="lobby" class="panel hidden">
+
+<h2 style="text-align:center">🎮 ຫ້ອງຫຼິ້ນ</h2>
+
+<div class="roomCode" id="roomCode">-----</div>
+
+<button class="secondary" onclick="shareRoom()">
+📤 ຊວນໝູ່
+</button>
+
+<div class="players" id="players"></div>
+
+<button id="startBtn"
+        class="primary"
+        onclick="startGame()">
+▶️ ເລີ່ມເກມ
+</button>
+
+<div id="lobbyMsg" class="message"></div>
+
+</section>
+
+
+<!-- GAME -->
+<section id="game" class="hidden">
+
+<div class="status" id="status">
+ກຳລັງລໍຖ້າ...
+</div>
+
+<div class="table">
+
+<div class="tableTitle">ໄພ່ເທິງໂຕະ</div>
+
+<div id="played" class="played"></div>
+
+</div>
+
+<div class="players" id="gamePlayers"></div>
+
+<div class="message" id="gameMsg"></div>
+
+<div id="hand" class="hand"></div>
+
+<div class="actions">
+
+<button class="primary"
+        onclick="play
